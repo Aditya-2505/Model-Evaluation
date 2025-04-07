@@ -2,19 +2,29 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Interactive Model Comparison</title>
   <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
     body {
       font-family: Arial, sans-serif;
-      padding: 2rem;
       background: #f8f9fa;
       line-height: 1.6;
-      margin-top: 60px; /* Added to account for fixed navbar */
+      padding-top: 70px; /* Space for fixed navbar */
     }
+    
     .container {
+      width: 95%;
       max-width: 1200px;
       margin: 0 auto;
+      padding: 1rem;
     }
+    
     header {
       background: #343a40;
       color: white;
@@ -23,44 +33,77 @@
       margin-bottom: 2rem;
       box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     }
+    
     h1 {
       margin: 0;
-      font-size: 2.2rem;
+      font-size: 2rem;
     }
+    
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 1.5rem;
+      }
+    }
+    
     h2 {
       color: #495057;
       border-bottom: 2px solid #dee2e6;
       padding-bottom: 0.5rem;
       margin-top: 2rem;
+      margin-bottom: 1rem;
+      font-size: 1.6rem;
     }
+    
+    @media (max-width: 768px) {
+      h2 {
+        font-size: 1.3rem;
+      }
+    }
+    
     .card-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
       gap: 1.5rem;
       margin-bottom: 2rem;
     }
+    
+    @media (max-width: 600px) {
+      .card-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    
     .card {
       background: white;
       border-radius: 8px;
       padding: 1.5rem;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
       transition: transform 0.3s ease, box-shadow 0.3s ease;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
     }
+    
     .card:hover {
       transform: translateY(-5px);
       box-shadow: 0 5px 15px rgba(0,0,0,0.1);
     }
+    
     .card-title {
       font-weight: 600;
       margin-top: 0;
       margin-bottom: 1rem;
       color: #343a40;
+      font-size: 1.1rem;
     }
+    
     .card-description {
       color: #6c757d;
       font-size: 0.9rem;
       margin-bottom: 1.5rem;
+      flex-grow: 1;
     }
+    
     .card-link {
       display: inline-block;
       background: #007bff;
@@ -70,70 +113,128 @@
       text-decoration: none;
       font-weight: 500;
       transition: background 0.3s ease;
+      text-align: center;
+      width: fit-content;
     }
+    
     .card-link:hover {
       background: #0056b3;
     }
+    
     .section {
       margin-bottom: 3rem;
     }
+    
     footer {
       text-align: center;
       margin-top: 3rem;
       padding-top: 1rem;
       border-top: 1px solid #dee2e6;
       color: #6c757d;
+      font-size: 0.9rem;
     }
+    
     .model-specific {
       background: #f1f8ff;
+      padding: 1.5rem;
+      border-radius: 8px;
     }
+    
     #back-to-top {
       display: none;
       position: fixed;
       bottom: 20px;
-      right: 30px;
+      right: 20px;
       z-index: 99;
       border: none;
       outline: none;
       background-color: #007bff;
       color: white;
       cursor: pointer;
-      padding: 15px;
+      padding: 12px;
       border-radius: 50%;
-      font-size: 18px;
+      font-size: 16px;
+      width: 40px;
+      height: 40px;
+      text-align: center;
+      line-height: 1;
     }
+    
     #back-to-top:hover {
       background-color: #0056b3;
     }
+    
     /* Navigation bar styles */
     .navbar {
       position: fixed;
       top: 0;
       left: 0;
+      right: 0;
       width: 100%;
       background: #343a40;
-      padding: 10px;
+      padding: 10px 15px;
       z-index: 1000;
       display: flex;
       justify-content: space-between;
       align-items: center;
       box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      flex-wrap: wrap;
     }
+    
+    @media (max-width: 600px) {
+      .navbar {
+        flex-direction: column;
+        padding: 10px;
+        height: auto;
+      }
+      
+      body {
+        padding-top: 100px; /* Increased for mobile navbar height */
+      }
+    }
+    
     .navbar a {
       color: white;
       text-decoration: none;
-      margin-left: 15px;
       font-weight: bold;
+      white-space: nowrap;
     }
+    
     .navbar a:hover {
       text-decoration: underline;
     }
+    
     .navbar-home {
       font-size: 1.1rem;
+      margin-right: 15px;
     }
+    
+    .navbar-links {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    
     .navbar-links a {
       margin-left: 15px;
       font-weight: normal;
+    }
+    
+    @media (max-width: 600px) {
+      .navbar-home {
+        margin-bottom: 5px;
+      }
+      
+      .navbar-links {
+        margin-top: 5px;
+        width: 100%;
+        justify-content: center;
+      }
+      
+      .navbar-links a {
+        margin: 0 10px;
+        font-size: 0.9rem;
+      }
     }
   </style>
   
@@ -170,7 +271,7 @@
         const card = document.createElement('div');
         card.className = 'card';
         card.innerHTML = `
-          <h3 class="card-title">${model} Dashboard</h3>
+          <h3 class="card-title">${model}</h3>
           <p class="card-description">Detailed analysis for ${model} across all precision settings.</p>
           <a href="visuals/interactive_dashboard_${model}.html" class="card-link">View Dashboard</a>
         `;
@@ -268,7 +369,7 @@
       <h2>Model-Specific Dashboards</h2>
       <p>These dashboards provide detailed analysis for individual models across all precision types:</p>
       <div class="card-grid" id="model-dashboards">
-        <!-- To be populated dynamically based on your models -->
+        <!-- To be populated dynamically -->
       </div>
     </section>
     
@@ -280,14 +381,14 @@
   <button onclick="topFunction()" id="back-to-top" title="Go to top">↑</button>
   
   <script>
-    // This script template will be added to each visualization HTML file
-    // It adds a home button and ensures the navbar is present
+    // Script template for visualization pages
     document.addEventListener('DOMContentLoaded', function() {
       // Add the navbar template code to visualization pages
       const addNavbarToViz = () => {
         // Check if we're on a visualization page by looking for plotly elements
         const plotlyDiv = document.querySelector('.plotly-graph-div');
         if (plotlyDiv && !document.querySelector('.navbar')) {
+          // Create navbar
           const navbar = document.createElement('div');
           navbar.className = 'navbar';
           navbar.innerHTML = `
@@ -300,10 +401,50 @@
           `;
           document.body.insertBefore(navbar, document.body.firstChild);
           
-          // Add some spacing to account for the navbar
-          const spacer = document.createElement('div');
-          spacer.style.height = '60px';
-          document.body.insertBefore(spacer, navbar.nextSibling);
+          // Add styles if not already present
+          if (!document.getElementById('navbar-styles')) {
+            const style = document.createElement('style');
+            style.id = 'navbar-styles';
+            style.textContent = `
+              body { padding-top: 70px; }
+              .navbar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                width: 100%;
+                background: #343a40;
+                padding: 10px 15px;
+                z-index: 1000;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+                flex-wrap: wrap;
+              }
+              .navbar a {
+                color: white;
+                text-decoration: none;
+                font-weight: bold;
+              }
+              .navbar a:hover { text-decoration: underline; }
+              .navbar-home { font-size: 1.1rem; margin-right: 15px; }
+              .navbar-links { display: flex; flex-wrap: wrap; align-items: center; }
+              .navbar-links a { margin-left: 15px; font-weight: normal; }
+              @media (max-width: 600px) {
+                .navbar { flex-direction: column; padding: 10px; }
+                body { padding-top: 100px; }
+                .navbar-home { margin-bottom: 5px; }
+                .navbar-links {
+                  margin-top: 5px;
+                  width: 100%;
+                  justify-content: center;
+                }
+                .navbar-links a { margin: 0 10px; font-size: 0.9rem; }
+              }
+            `;
+            document.head.appendChild(style);
+          }
         }
       };
       
