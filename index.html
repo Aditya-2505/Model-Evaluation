@@ -9,6 +9,7 @@
       padding: 2rem;
       background: #f8f9fa;
       line-height: 1.6;
+      margin-top: 60px; /* Added to account for fixed navbar */
     }
     .container {
       max-width: 1200px;
@@ -104,6 +105,36 @@
     #back-to-top:hover {
       background-color: #0056b3;
     }
+    /* Navigation bar styles */
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background: #343a40;
+      padding: 10px;
+      z-index: 1000;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    .navbar a {
+      color: white;
+      text-decoration: none;
+      margin-left: 15px;
+      font-weight: bold;
+    }
+    .navbar a:hover {
+      text-decoration: underline;
+    }
+    .navbar-home {
+      font-size: 1.1rem;
+    }
+    .navbar-links a {
+      margin-left: 15px;
+      font-weight: normal;
+    }
   </style>
   
   <script>
@@ -149,6 +180,16 @@
   </script>
 </head>
 <body>
+  <!-- Navigation bar -->
+  <div class="navbar">
+    <a href="index.html" class="navbar-home">🏠 Model Evaluation Dashboard</a>
+    <div class="navbar-links">
+      <a href="visuals/interactive_performance_clustering.html">Clusters</a>
+      <a href="visuals/interactive_efficiency_score.html">Efficiency</a>
+      <a href="visuals/interactive_best_by_metric.html">Best Models</a>
+    </div>
+  </div>
+
   <div class="container">
     <header>
       <h1>📊 Model Evaluation Dashboard</h1>
@@ -228,13 +269,6 @@
       <p>These dashboards provide detailed analysis for individual models across all precision types:</p>
       <div class="card-grid" id="model-dashboards">
         <!-- To be populated dynamically based on your models -->
-        <!-- Example: -->
-        <div class="card">
-          <h3 class="card-title">MODEL_A Dashboard</h3>
-          <p class="card-description">Detailed multi-view dashboard for MODEL_A across all precision settings.</p>
-          <a href="visuals/interactive_dashboard_MODEL_A.html" class="card-link">View Dashboard</a>
-        </div>
-        <!-- Add more model cards based on your actual models -->
       </div>
     </section>
     
@@ -246,27 +280,35 @@
   <button onclick="topFunction()" id="back-to-top" title="Go to top">↑</button>
   
   <script>
-    // Add home button to all visualization pages
-    // Note: This script will only work in the visualization HTML files, not on the main page
-    // It's included here for completeness but will have no effect on the main page
+    // This script template will be added to each visualization HTML file
+    // It adds a home button and ensures the navbar is present
     document.addEventListener('DOMContentLoaded', function() {
-      const plotlyDiv = document.querySelector('.plotly-graph-div');
-      if (plotlyDiv) {
-        const header = plotlyDiv.parentElement;
-        const homeButton = document.createElement('a');
-        homeButton.href = '../index.html';
-        homeButton.innerHTML = '← Back to Dashboard';
-        homeButton.style.position = 'absolute';
-        homeButton.style.top = '10px';
-        homeButton.style.left = '10px';
-        homeButton.style.padding = '8px 16px';
-        homeButton.style.background = '#007bff';
-        homeButton.style.color = 'white';
-        homeButton.style.borderRadius = '4px';
-        homeButton.style.textDecoration = 'none';
-        homeButton.style.zIndex = '1000';
-        header.appendChild(homeButton);
-      }
+      // Add the navbar template code to visualization pages
+      const addNavbarToViz = () => {
+        // Check if we're on a visualization page by looking for plotly elements
+        const plotlyDiv = document.querySelector('.plotly-graph-div');
+        if (plotlyDiv && !document.querySelector('.navbar')) {
+          const navbar = document.createElement('div');
+          navbar.className = 'navbar';
+          navbar.innerHTML = `
+            <a href="../index.html" class="navbar-home">🏠 Model Evaluation Dashboard</a>
+            <div class="navbar-links">
+              <a href="interactive_performance_clustering.html">Clusters</a>
+              <a href="interactive_efficiency_score.html">Efficiency</a>
+              <a href="interactive_best_by_metric.html">Best Models</a>
+            </div>
+          `;
+          document.body.insertBefore(navbar, document.body.firstChild);
+          
+          // Add some spacing to account for the navbar
+          const spacer = document.createElement('div');
+          spacer.style.height = '60px';
+          document.body.insertBefore(spacer, navbar.nextSibling);
+        }
+      };
+      
+      // Call the function to add navbar if needed
+      addNavbarToViz();
     });
   </script>
 </body>
